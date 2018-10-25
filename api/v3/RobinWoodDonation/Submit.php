@@ -146,7 +146,7 @@ function _civicrm_api3_robin_wood_donation_Submit_spec(&$params) {
 function civicrm_api3_robin_wood_donation_Submit($params) {
   // Log the API call to the CiviCRM debug log.
   if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-    CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:\n'. json_encode($params, JSON_PRETTY_PRINT));
+    CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".json_encode($params, JSON_PRETTY_PRINT));
   }
 
   try {

@@ -182,7 +182,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       ))));
     }
 
-    // Validate IBAN an BIC.
+    // Validate IBAN and BIC for SEPA payment method.
     if ($params['payment_instrument_id'] == 'sepa') {
       foreach (array(
                  'iban',
@@ -198,16 +198,16 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
 
     // Validate allowed values for fields.
     if (!in_array($params['gender_id'], array(
-      1,
-      2,
-      3,
+      CRM_RobinwoodAPI_Submission::GENDER_ID_FEMALE,
+      CRM_RobinwoodAPI_Submission::GENDER_ID_MALE,
+      CRM_RobinwoodAPI_Submission::GENDER_ID_NEUTRAL,
     ))) {
       throw new Exception(E::ts('Invalid value for parameter %1', array(
         1 => 'gender_id',
       )));
     }
 
-    if (!in_array($params['membership_type_id'], array(
+    if (!empty($params['membership_type_id'] && !in_array($params['membership_type_id'], array(
       CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP,
       CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP,
       CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION,
@@ -232,8 +232,30 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     CRM_RobinwoodAPI_Submission::resolveCountry($params);
 
     /***************************************************************************
-     * Identify or create contact using XCM.                                   *
+     * Identify and update or create contact using XCM.                        *
      **************************************************************************/
+    // Set "Herkunft" custom field value depending on submission type.
+    if (!empty($params['membership_type_id'])) {
+      switch ($params['membership_type_id']) {
+        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION:
+          $option_value_id_herkunft = CRM_RobinwoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_REGULAR_DONATION;
+          break;
+        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP:
+          $option_value_id_herkunft = CRM_RobinwoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_SPONSOR_MEMBERSHIP;
+          break;
+        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP:
+          $option_value_id_herkunft = CRM_RobinwoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_ACTIVE_MEMBERSHIP;
+          break;
+      }
+    }
+    else {
+      $option_value_id_herkunft = CRM_RobinwoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_DONATION;
+    }
+    $option_value_herkunft = civicrm_api3('OptionValue', 'getsingle', array(
+      'id' => $option_value_id_herkunft,
+    ));
+
+    // Identify and update or create contact.
     $contact_data = array_intersect_key($params, array_fill_keys(array(
       'first_name',
       'last_name',
@@ -243,8 +265,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       'country_id',
       'email',
       'gender_id',
-      // TODO: Set custom fields "Herkunft" and "Herkunftsdatum", according to RW-8050-11.
-    ), TRUE));
+    ), TRUE)) + array(
+        'custom_' . CRM_RobinwoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFT => $option_value_herkunft['value'],
+        'custom_' . CRM_RobinwoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFTSDATUM => date('Ymd'),
+      );
     $xcm_result = civicrm_api3(
       'Contact',
       'getorcreate',

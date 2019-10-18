@@ -48,7 +48,26 @@ class CRM_RobinwoodAPI_Submission {
 
   const GROUP_ID_NEWSLETTER_EMAIL = 28;
 
+  // TODO: Set to actual group ID.
   const GROUP_ID_NEWSLETTER_POSTAL = NULL;
+
+  const GENDER_ID_FEMALE = 1;
+
+  const GENDER_ID_MALE = 2;
+
+  const GENDER_ID_NEUTRAL = 3;
+
+  const CUSTOM_FIELD_ID_HERKUNFT = 8;
+
+  const CUSTOM_FIELD_ID_HERKUNFTSDATUM = 9;
+
+  const OPTION_VALUE_ID_HERKUNFT_DONATION = 7612;
+
+  const OPTION_VALUE_ID_HERKUNFT_REGULAR_DONATION = 7612;
+
+  const OPTION_VALUE_ID_HERKUNFT_ACTIVE_MEMBERSHIP = 875;
+
+  const OPTION_VALUE_ID_HERKUNFT_SPONSOR_MEMBERSHIP = 860;
 
   /**
    * resolve an ISO country code within a parameter array into the corresponding

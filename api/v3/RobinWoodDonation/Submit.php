@@ -196,7 +196,37 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       }
     }
 
-    // TODO: Validate allowed values for fields.
+    // Validate allowed values for fields.
+    if (!in_array($params['gender_id'], array(
+      1,
+      2,
+      3,
+    ))) {
+      throw new Exception(E::ts('Invalid value for parameter %1', array(
+        1 => 'gender_id',
+      )));
+    }
+
+    if (!in_array($params['membership_type_id'], array(
+      CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP,
+      CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP,
+      CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION,
+    ))) {
+      throw new Exception(E::ts('Invalid value for parameter %1', array(
+        1 => 'membership_type_id',
+      )));
+    }
+
+    if (!in_array($params['payment_instrument_id'], array(
+      CRM_RobinwoodAPI_Submission::PAYMENT_INSTRUMENT_ID_STANDING_ORDER,
+      CRM_RobinwoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_CREDIT_CARD,
+      CRM_RobinwoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_PAYPAL,
+      CRM_RobinwoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_SOFORT,
+    ))) {
+      throw new Exception(E::ts('Invalid value for parameter %1', array(
+        1 => 'payment_instrument_id',
+      )));
+    }
 
     // Resolve country ISO code.
     CRM_RobinwoodAPI_Submission::resolveCountry($params);
@@ -212,6 +242,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       'city',
       'country_id',
       'email',
+      'gender_id',
     ), TRUE));
     $xcm_result = civicrm_api3(
       'Contact',

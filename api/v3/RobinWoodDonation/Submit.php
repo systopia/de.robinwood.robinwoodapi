@@ -207,7 +207,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       )));
     }
 
-    if (!empty($params['membership_type_id'] && !in_array($params['membership_type_id'], array(
+    if (!empty($params['membership_type_id']) && !in_array($params['membership_type_id'], array(
       CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP,
       CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP,
       CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION,

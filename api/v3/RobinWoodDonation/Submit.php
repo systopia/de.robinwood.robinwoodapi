@@ -243,6 +243,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       'country_id',
       'email',
       'gender_id',
+      // TODO: Set custom fields "Herkunft" and "Herkunftsdatum", according to RW-8050-11.
     ), TRUE));
     $xcm_result = civicrm_api3(
       'Contact',

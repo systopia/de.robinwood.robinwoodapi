@@ -1,4 +1,19 @@
 <?php
+/*-------------------------------------------------------+
+| Robin Wood API extension                               |
+| Copyright (C) 2019 SYSTOPIA                            |
+| Author: J. Schuppe (schuppe@systopia.de)               |
+| http://www.systopia.de/                                |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++--------------------------------------------------------*/
+
 use CRM_RobinWoodAPI_ExtensionUtil as E;
 
 /**
@@ -150,9 +165,196 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
   }
 
   try {
-    return civicrm_api3_create_success();
+    $result = array();
+
+    /***************************************************************************
+     * Validate and prepare parameters.                                        *
+     **************************************************************************/
+    // Validate membership type ID and frequency interdependency.
+    if (!empty($params['membership_type_id']) && empty($params['frequency'])) {
+      throw new Exception((E::ts('Required parameter %1 missing.', array(
+        1 => 'frequency',
+      ))));
+    }
+    if (!empty($params['frequency']) && empty($params['membership_type_id'])) {
+      throw new Exception((E::ts('Required parameter %1 missing.', array(
+        1 => 'membership_type_id',
+      ))));
+    }
+
+    // Validate IBAN an BIC.
+    if ($params['payment_instrument_id'] == 'sepa') {
+      foreach (array(
+                 'iban',
+                 'bic',
+               ) as $required_param) {
+        if (empty($params[$required_param])) {
+          throw new Exception(E::ts('Required parameter %1 missing.', array(
+            1 => $required_param,
+          )));
+        }
+      }
+    }
+
+    // TODO: Validate allowed values for fields.
+
+    // Resolve country ISO code.
+    CRM_RobinwoodAPI_Submission::resolveCountry($params);
+
+    /***************************************************************************
+     * Identify or create contact using XCM.                                   *
+     **************************************************************************/
+    $contact_data = array_intersect_key($params, array_fill_keys(array(
+      'first_name',
+      'last_name',
+      'street_address',
+      'postal_code',
+      'city',
+      'country_id',
+      'email',
+    ), TRUE));
+    $xcm_result = civicrm_api3(
+      'Contact',
+      'getorcreate',
+      $contact_data
+    );
+    if ($xcm_result['is_error']) {
+      throw new Exception($xcm_result['error_message']);
+    }
+    $contact_id = $xcm_result['id'];
+    $result['contact_id'] = $contact_id;
+
+    /***************************************************************************
+     * Subscribe to newsletters.                                               *
+     **************************************************************************/
+    // Subscribe to e-mail newsletter.
+    if (!empty($params['newsletter_email'])) {
+      $group_contact_email = civicrm_api3('GroupContact', 'create', array(
+        'contact_id' => $contact_id,
+        'group_id' => CRM_RobinwoodAPI_Submission::GROUP_ID_NEWSLETTER_EMAIL,
+        'status' => 'Added',
+      ));
+      if ($group_contact_email['is_error']) {
+        throw new Exception($group_contact_email['error_message']);
+      }
+      $result['group_contact_email'] = $group_contact_email['id'];
+    }
+
+    // Subscribe to postal newsletter.
+    if (!empty($params['newsletter_postal'])) {
+      $group_contact_postal = civicrm_api3('GroupContact', 'create', array(
+        'contact_id' => $contact_id,
+        'group_id' => CRM_RobinwoodAPI_Submission::GROUP_ID_NEWSLETTER_POSTAL,
+        'status' => 'Added',
+      ));
+      if ($group_contact_postal['is_error']) {
+        throw new Exception($group_contact_postal['error_message']);
+      }
+      $result['group_contact_postal'] = $group_contact_postal['id'];
+    }
+
+    /***************************************************************************
+     * Create SEPA mandate or (recurring) contribution.                        *
+     **************************************************************************/
+    // Determine financial type from submitted membership type ID.
+    if (!empty($params['membership_type_id'])) {
+      switch ($params['membership_type_id']) {
+        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION:
+          $financial_type_id = CRM_RobinwoodAPI_Submission::FINANCIAL_TYPE_ID_REGULAR_DONATION;
+          break;
+        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP:
+          $financial_type_id = CRM_RobinwoodAPI_Submission::FINANCIAL_TYPE_ID_SPONSOR_MEMBERSHIP_FEE;
+          break;
+        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP:
+          $financial_type_id = CRM_RobinwoodAPI_Submission::FINANCIAL_TYPE_ID_ACTIVE_MEMBERSHIP_FEE;
+          break;
+      }
+    }
+    else {
+      $financial_type_id = CRM_RobinwoodAPI_Submission::FINANCIAL_TYPE_ID_DONATION;
+    }
+
+    if ($params['payment_instrument_id'] == 'sepa') {
+      // Create SEPA mandate using SepaMandate.createfull API.
+      $mandate_data = array(
+        'contact_id' => $contact_id,
+        'type' => (empty($params['frequency']) ? 'OOFF' : 'RCUR'),
+        'iban' => $params['iban'],
+        'bic' => $params['bic'],
+        'amount' => $params['amount'],
+        'financial_type_id' => $financial_type_id,
+      );
+      $mandate = civicrm_api3('SepaMandate', 'createfull', $mandate_data);
+      if ($mandate['is_error']) {
+        throw new Exception($mandate['error_message']);
+      }
+      $result['mandate_id'] = $mandate['id'];
+    }
+    else {
+      // Create (recurring) contribution for other payment instruments.
+      switch ($params['payment_instrument_id']) {
+        case CRM_RobinwoodAPI_Submission::PAYMENT_INSTRUMENT_ID_STANDING_ORDER:
+          $contribution_status_id = CRM_RobinwoodAPI_Submission::CONTRIBUTION_STATUS_ID_PENDING;
+          break;
+        default:
+          // TODO: Should this be "Completed" instead?
+          $contribution_status_id = CRM_RobinwoodAPI_Submission::CONTRIBUTION_STATUS_ID_IN_PROGRESS;
+          break;
+      }
+
+      $contribution_data = array(
+        'financial_type_id' => $financial_type_id,
+        'total_amount' => $params['amount'],
+        'contact_id' => $contact_id,
+        'payment_instrument_id' => $params['payment_instrument_id'],
+        'contribution_status_id' => $contribution_status_id,
+//        'trxn_id', // TODO: Set to Commerce order ID or Commerce payment ID?
+      );
+
+      if (!empty($params['frequency'])) {
+        // Create recurring contribution.
+        $contribution_recur_data = $contribution_data + array(
+          'frequency_unit' => 'month',
+          // Calculate from number of installments per year.
+          'frequency_interval' => (12 / $params['frequency']),
+          );
+        $contribution_recur = civicrm_api3('ContributionRecur', 'create', $contribution_recur_data);
+        if ($contribution_recur['is_error']) {
+          throw new Exception($contribution_recur['error_message']);
+        }
+        // Link contribution to created recurring contribution.
+        $contribution_data['contribution_recur_id'] = $contribution_recur['id'];
+        $result['contribution_recur_id'] = $contribution_recur['id'];
+      }
+
+      // Create contribution.
+      $contribution = civicrm_api3('Contribution', 'create', $contribution_data);
+      if ($contribution['is_error']) {
+        throw new Exception($contribution['error_message']);
+      }
+      $result['contribution_id'] = $contribution['id'];
+    }
+
+    /***************************************************************************
+     * Handle membership requests.                                             *
+     **************************************************************************/
+    if (!empty($params['membership_type_id'])) {
+      // Create membership.
+      $membership = civicrm_api3('Membership', 'create', array(
+        'membership_type_id' => $params['membership_type_id'],
+        'contact_id' => $contact_id,
+        'contribution_recur_id' => $contribution_recur['id'],
+        // TODO: Any more parameters?
+      ));
+      if ($membership['is_error']) {
+        throw new Exception($membership['error_message']);
+      }
+      $result['membership_id'] = $membership['id'];
+    }
+
+    return civicrm_api3_create_success($result);
   }
-  catch (CiviCRM_API3_Exception $exception) {
+  catch (Exception $exception) {
     return civicrm_api3_create_error($exception->getMessage());
   }
 }

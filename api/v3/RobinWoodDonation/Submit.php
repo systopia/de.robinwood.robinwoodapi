@@ -170,6 +170,9 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     /***************************************************************************
      * Validate and prepare parameters.                                        *
      **************************************************************************/
+    if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Validating parameters.');
+    }
     // Validate membership type ID and frequency interdependency.
     if (!empty($params['membership_type_id']) && empty($params['frequency'])) {
       throw new Exception((E::ts('Required parameter %1 missing.', array(
@@ -235,6 +238,9 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     /***************************************************************************
      * Identify and update or create contact using XCM.                        *
      **************************************************************************/
+    if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Identifying or creating contact.');
+    }
     // Set "Herkunft" custom field value depending on submission type.
     if (!empty($params['membership_type_id'])) {
       switch ($params['membership_type_id']) {
@@ -284,6 +290,9 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     /***************************************************************************
      * Subscribe to newsletters.                                               *
      **************************************************************************/
+    if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Subscribing to newsletters.');
+    }
     // Subscribe to e-mail newsletter.
     if (!empty($params['newsletter_email'])) {
       $group_contact_email = civicrm_api3('GroupContact', 'create', array(
@@ -313,6 +322,9 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     /***************************************************************************
      * Create SEPA mandate or (recurring) contribution.                        *
      **************************************************************************/
+    if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Creating SEPA mandate and/or contribution.');
+    }
     // Determine financial type from submitted membership type ID.
     if (!empty($params['membership_type_id'])) {
       switch ($params['membership_type_id']) {
@@ -395,6 +407,9 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     /***************************************************************************
      * Handle membership requests.                                             *
      **************************************************************************/
+    if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Handling membership requests.');
+    }
     if (!empty($params['membership_type_id'])) {
       // Create membership.
       $membership = civicrm_api3('Membership', 'create', array(
@@ -412,6 +427,9 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     return civicrm_api3_create_success($result);
   }
   catch (Exception $exception) {
+    if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Caught exception: ' . $exception->getMessage());
+    }
     return civicrm_api3_create_error($exception->getMessage());
   }
 }

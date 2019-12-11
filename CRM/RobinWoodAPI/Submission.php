@@ -16,7 +16,7 @@
 
 use CRM_Recentitems_ExtensionUtil as E;
 
-class CRM_RobinwoodAPI_Submission {
+class CRM_RobinWoodAPI_Submission {
 
   const FINANCIAL_TYPE_ID_DONATION = 1;
 

@@ -198,9 +198,9 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
 
     // Validate allowed values for fields.
     if (!in_array($params['gender_id'], array(
-      CRM_RobinwoodAPI_Submission::GENDER_ID_FEMALE,
-      CRM_RobinwoodAPI_Submission::GENDER_ID_MALE,
-      CRM_RobinwoodAPI_Submission::GENDER_ID_NEUTRAL,
+      CRM_RobinWoodAPI_Submission::GENDER_ID_FEMALE,
+      CRM_RobinWoodAPI_Submission::GENDER_ID_MALE,
+      CRM_RobinWoodAPI_Submission::GENDER_ID_NEUTRAL,
     ))) {
       throw new Exception(E::ts('Invalid value for parameter %1', array(
         1 => 'gender_id',
@@ -208,9 +208,9 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     }
 
     if (!empty($params['membership_type_id']) && !in_array($params['membership_type_id'], array(
-      CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP,
-      CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP,
-      CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION,
+      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP,
+      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP,
+      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION,
     ))) {
       throw new Exception(E::ts('Invalid value for parameter %1', array(
         1 => 'membership_type_id',
@@ -218,10 +218,11 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     }
 
     if (!in_array($params['payment_instrument_id'], array(
-      CRM_RobinwoodAPI_Submission::PAYMENT_INSTRUMENT_ID_STANDING_ORDER,
-      CRM_RobinwoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_CREDIT_CARD,
-      CRM_RobinwoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_PAYPAL,
-      CRM_RobinwoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_SOFORT,
+      'sepa',
+      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_STANDING_ORDER,
+      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_CREDIT_CARD,
+      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_PAYPAL,
+      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_SOFORT,
     ))) {
       throw new Exception(E::ts('Invalid value for parameter %1', array(
         1 => 'payment_instrument_id',
@@ -229,7 +230,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     }
 
     // Resolve country ISO code.
-    CRM_RobinwoodAPI_Submission::resolveCountry($params);
+    CRM_RobinWoodAPI_Submission::resolveCountry($params);
 
     /***************************************************************************
      * Identify and update or create contact using XCM.                        *
@@ -237,19 +238,19 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     // Set "Herkunft" custom field value depending on submission type.
     if (!empty($params['membership_type_id'])) {
       switch ($params['membership_type_id']) {
-        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION:
-          $option_value_id_herkunft = CRM_RobinwoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_REGULAR_DONATION;
+        case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION:
+          $option_value_id_herkunft = CRM_RobinWoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_REGULAR_DONATION;
           break;
-        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP:
-          $option_value_id_herkunft = CRM_RobinwoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_SPONSOR_MEMBERSHIP;
+        case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP:
+          $option_value_id_herkunft = CRM_RobinWoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_SPONSOR_MEMBERSHIP;
           break;
-        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP:
-          $option_value_id_herkunft = CRM_RobinwoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_ACTIVE_MEMBERSHIP;
+        case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP:
+          $option_value_id_herkunft = CRM_RobinWoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_ACTIVE_MEMBERSHIP;
           break;
       }
     }
     else {
-      $option_value_id_herkunft = CRM_RobinwoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_DONATION;
+      $option_value_id_herkunft = CRM_RobinWoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_DONATION;
     }
     $option_value_herkunft = civicrm_api3('OptionValue', 'getsingle', array(
       'id' => $option_value_id_herkunft,
@@ -266,8 +267,8 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       'email',
       'gender_id',
     ), TRUE)) + array(
-        'custom_' . CRM_RobinwoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFT => $option_value_herkunft['value'],
-        'custom_' . CRM_RobinwoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFTSDATUM => date('Ymd'),
+        'custom_' . CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFT => $option_value_herkunft['value'],
+        'custom_' . CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFTSDATUM => date('Ymd'),
       );
     $xcm_result = civicrm_api3(
       'Contact',
@@ -287,7 +288,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     if (!empty($params['newsletter_email'])) {
       $group_contact_email = civicrm_api3('GroupContact', 'create', array(
         'contact_id' => $contact_id,
-        'group_id' => CRM_RobinwoodAPI_Submission::GROUP_ID_NEWSLETTER_EMAIL,
+        'group_id' => CRM_RobinWoodAPI_Submission::GROUP_ID_NEWSLETTER_EMAIL,
         'status' => 'Added',
       ));
       if ($group_contact_email['is_error']) {
@@ -300,7 +301,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     if (!empty($params['newsletter_postal'])) {
       $group_contact_postal = civicrm_api3('GroupContact', 'create', array(
         'contact_id' => $contact_id,
-        'group_id' => CRM_RobinwoodAPI_Submission::GROUP_ID_NEWSLETTER_POSTAL,
+        'group_id' => CRM_RobinWoodAPI_Submission::GROUP_ID_NEWSLETTER_POSTAL,
         'status' => 'Added',
       ));
       if ($group_contact_postal['is_error']) {
@@ -315,19 +316,19 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     // Determine financial type from submitted membership type ID.
     if (!empty($params['membership_type_id'])) {
       switch ($params['membership_type_id']) {
-        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION:
-          $financial_type_id = CRM_RobinwoodAPI_Submission::FINANCIAL_TYPE_ID_REGULAR_DONATION;
+        case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION:
+          $financial_type_id = CRM_RobinWoodAPI_Submission::FINANCIAL_TYPE_ID_REGULAR_DONATION;
           break;
-        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP:
-          $financial_type_id = CRM_RobinwoodAPI_Submission::FINANCIAL_TYPE_ID_SPONSOR_MEMBERSHIP_FEE;
+        case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP:
+          $financial_type_id = CRM_RobinWoodAPI_Submission::FINANCIAL_TYPE_ID_SPONSOR_MEMBERSHIP_FEE;
           break;
-        case CRM_RobinwoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP:
-          $financial_type_id = CRM_RobinwoodAPI_Submission::FINANCIAL_TYPE_ID_ACTIVE_MEMBERSHIP_FEE;
+        case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP:
+          $financial_type_id = CRM_RobinWoodAPI_Submission::FINANCIAL_TYPE_ID_ACTIVE_MEMBERSHIP_FEE;
           break;
       }
     }
     else {
-      $financial_type_id = CRM_RobinwoodAPI_Submission::FINANCIAL_TYPE_ID_DONATION;
+      $financial_type_id = CRM_RobinWoodAPI_Submission::FINANCIAL_TYPE_ID_DONATION;
     }
 
     if ($params['payment_instrument_id'] == 'sepa') {
@@ -349,12 +350,12 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     else {
       // Create (recurring) contribution for other payment instruments.
       switch ($params['payment_instrument_id']) {
-        case CRM_RobinwoodAPI_Submission::PAYMENT_INSTRUMENT_ID_STANDING_ORDER:
-          $contribution_status_id = CRM_RobinwoodAPI_Submission::CONTRIBUTION_STATUS_ID_PENDING;
+        case CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_STANDING_ORDER:
+          $contribution_status_id = CRM_RobinWoodAPI_Submission::CONTRIBUTION_STATUS_ID_PENDING;
           break;
         default:
           // TODO: Should this be "Completed" instead?
-          $contribution_status_id = CRM_RobinwoodAPI_Submission::CONTRIBUTION_STATUS_ID_IN_PROGRESS;
+          $contribution_status_id = CRM_RobinWoodAPI_Submission::CONTRIBUTION_STATUS_ID_IN_PROGRESS;
           break;
       }
 

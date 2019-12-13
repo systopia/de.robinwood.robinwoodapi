@@ -308,6 +308,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     $contact_id = $xcm_result['id'];
     $result['contact_id'] = $contact_id;
 
+    if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Identified or created Contact with ID ' . $result['contact_id']);
+    }
+
     /***************************************************************************
      * Subscribe to newsletters.                                               *
      **************************************************************************/
@@ -325,6 +329,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         throw new Exception($group_contact_email['error_message']);
       }
       $result['group_contact_email'] = $group_contact_email['id'];
+
+      if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created GroupContact with ID ' . $result['group_contact_email']);
+      }
     }
 
     // Subscribe to postal newsletter.
@@ -338,6 +346,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         throw new Exception($group_contact_postal['error_message']);
       }
       $result['group_contact_postal'] = $group_contact_postal['id'];
+
+      if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created GroupContact with ID ' . $result['group_contact_postal']);
+      }
     }
 
     /***************************************************************************
@@ -346,6 +358,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
       CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Creating SEPA mandate and/or contribution.');
     }
+
     // Determine financial type from submitted membership type ID.
     if (!empty($params['membership_type_id'])) {
       switch ($params['membership_type_id']) {
@@ -366,6 +379,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
 
     if ($params['payment_instrument_id'] == 'sepa') {
       // Create SEPA mandate using SepaMandate.createfull API.
+      if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Creating SEPA mandate.');
+      }
+
       $mandate_data = array(
         'contact_id' => $contact_id,
         'type' => (empty($params['frequency']) ? 'OOFF' : 'RCUR'),
@@ -384,6 +401,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         throw new Exception($mandate['error_message']);
       }
       $result['mandate_id'] = $mandate['id'];
+
+      if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created SepaMandate with ID ' . $result['mandate_id']);
+      }
     }
     else {
       // Create (recurring) contribution for other payment instruments.
@@ -411,6 +432,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
 
       if (!empty($params['frequency'])) {
         // Create recurring contribution.
+        if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+          CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Creating recurring contribution.');
+        }
+
         $contribution_recur_data = $contribution_data + array(
           'frequency_unit' => 'month',
           // Calculate from number of installments per year.
@@ -423,14 +448,26 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         // Link contribution to created recurring contribution.
         $contribution_data['contribution_recur_id'] = $contribution_recur['id'];
         $result['contribution_recur_id'] = $contribution_recur['id'];
+
+        if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+          CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created ContributionRecur with ID ' . $result['contribution_recur_id']);
+        }
       }
 
       // Create contribution.
+      if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Creating contribution.');
+      }
+
       $contribution = civicrm_api3('Contribution', 'create', $contribution_data);
       if ($contribution['is_error']) {
         throw new Exception($contribution['error_message']);
       }
       $result['contribution_id'] = $contribution['id'];
+
+      if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created Contribution with ID ' . $result['contribution_id']);
+      }
     }
 
     /***************************************************************************
@@ -462,6 +499,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         throw new Exception($membership['error_message']);
       }
       $result['membership_id'] = $membership['id'];
+
+      if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created Membership with ID ' . $result['membership_id']);
+      }
     }
 
     return civicrm_api3_create_success($result);

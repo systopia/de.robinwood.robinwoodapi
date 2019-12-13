@@ -350,7 +350,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         'type' => (empty($params['frequency']) ? 'OOFF' : 'RCUR'),
         'iban' => $params['iban'],
         'bic' => $params['bic'],
-        'amount' => $params['amount'],
+        'amount' => $params['amount'] / 100,
         'financial_type_id' => $financial_type_id,
       );
       $mandate = civicrm_api3('SepaMandate', 'createfull', $mandate_data);
@@ -373,7 +373,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
 
       $contribution_data = array(
         'financial_type_id' => $financial_type_id,
-        'total_amount' => $params['amount'],
+        'total_amount' => $params['amount'] / 100,
         'contact_id' => $contact_id,
         'payment_instrument_id' => $params['payment_instrument_id'],
         'contribution_status_id' => $contribution_status_id,

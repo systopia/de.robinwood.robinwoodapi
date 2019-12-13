@@ -104,15 +104,15 @@ function _civicrm_api3_robin_wood_donation_Submit_spec(&$params) {
     'api.required' => 1,
     'description' => 'The contact\'s gender.',
   );
-  $params['membership_type_id'] = array(
-    'name' => 'membership_type_id',
+  $params['membership_type'] = array(
+    'name' => 'membership_type',
     'title' => 'Membership type',
-    'type' => CRM_Utils_Type::T_INT,
+    'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 0,
     'description' => 'The type of the membership to create for the contact.',
   );
-  $params['payment_instrument_id'] = array(
-    'name' => 'payment_instrument_id',
+  $params['payment_instrument'] = array(
+    'name' => 'payment_instrument',
     'title' => 'Payment method',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 1,
@@ -174,19 +174,19 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Validating parameters.');
     }
     // Validate membership type ID and frequency interdependency.
-    if (!empty($params['membership_type_id']) && empty($params['frequency'])) {
+    if (!empty($params['membership_type']) && empty($params['frequency'])) {
       throw new Exception((E::ts('Required parameter %1 missing.', array(
         1 => 'frequency',
       ))));
     }
-    if (!empty($params['frequency']) && empty($params['membership_type_id'])) {
+    if (!empty($params['frequency']) && empty($params['membership_type'])) {
       throw new Exception((E::ts('Required parameter %1 missing.', array(
-        1 => 'membership_type_id',
+        1 => 'membership_type',
       ))));
     }
 
     // Validate IBAN and BIC for SEPA payment method.
-    if ($params['payment_instrument_id'] == 'sepa') {
+    if ($params['payment_instrument'] == 'sepa') {
       foreach (array(
                  'iban',
                  'bic',
@@ -210,26 +210,37 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       )));
     }
 
-    if (!empty($params['membership_type_id']) && !in_array($params['membership_type_id'], array(
-      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP,
-      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP,
-      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION,
-    ))) {
+    // Map membership types to membership_type_id values.
+    $membership_types = array(
+      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP => 'AKTIVE_MITGLIEDSCHAFT',
+      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP => 'FOERDERMITGLIEDSCHAFT',
+      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION => 'DAUERSPENDE',
+    );
+    if (!in_array($params['membership_type'], $membership_types)) {
       throw new Exception(E::ts('Invalid value for parameter %1', array(
-        1 => 'membership_type_id',
+        1 => 'membership_type',
       )));
     }
+    else {
+      $params['membership_type_id'] = array_search($params['membership_type'], $membership_types);
+    }
 
-    if (!in_array($params['payment_instrument_id'], array(
-      'sepa',
-      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_STANDING_ORDER,
-      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_CREDIT_CARD,
-      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_PAYPAL,
-      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_SOFORT,
-    ))) {
+    // Map payment methods to payment_instrument_id values.
+    // TODO: Set to actual submitted values.
+    $payment_instruments = array(
+      'sepa' => 'sepa_direct_debit',
+      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_STANDING_ORDER => '',
+      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_CREDIT_CARD => '',
+      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_PAYPAL => '',
+      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_SOFORT => '',
+    );
+    if (!in_array($params['payment_instrument'], $payment_instruments)) {
       throw new Exception(E::ts('Invalid value for parameter %1', array(
-        1 => 'payment_instrument_id',
+        1 => 'payment_instrument',
       )));
+    }
+    else {
+      $params['payment_instrument_id'] = array_search($params['payment_instrument'], $payment_instruments);
     }
 
     // Resolve country ISO code.

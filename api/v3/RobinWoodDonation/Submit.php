@@ -373,6 +373,8 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         'bic' => $params['bic'],
         'amount' => $params['amount'] / 100,
         'financial_type_id' => $financial_type_id,
+        'frequency_unit' => 'month',
+        'frequency_interval' => $params['frequency'],
       );
       if (!empty($params['trxn_id'])) {
         $mandate_data['trxn_id'] = $params['trxn_id'];
@@ -397,6 +399,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
 
       $contribution_data = array(
         'financial_type_id' => $financial_type_id,
+        'amount' => $params['amount'] / 100,
         'total_amount' => $params['amount'] / 100,
         'contact_id' => $contact_id,
         'payment_instrument_id' => $params['payment_instrument_id'],

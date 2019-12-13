@@ -146,6 +146,13 @@ function _civicrm_api3_robin_wood_donation_Submit_spec(&$params) {
     'api.required' => 0,
     'description' => 'The number of installments per year for the donation or membership fee.',
   );
+  $params['trxn_id'] = array(
+    'name' => 'trxn_id',
+    'title' => 'trxn_id',
+    'type' => CRM_Utils_Type::T_STRING,
+    'api.required' => 0,
+    'description' => 'The unique ID of this transaction, which it is identifiable with in the source system.',
+  );
 }
 
 /**
@@ -364,6 +371,9 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         'amount' => $params['amount'] / 100,
         'financial_type_id' => $financial_type_id,
       );
+      if (!empty($params['trxn_id'])) {
+        $mandate_data['trxn_id'] = $params['trxn_id'];
+      }
       $mandate = civicrm_api3('SepaMandate', 'createfull', $mandate_data);
       if ($mandate['is_error']) {
         throw new Exception($mandate['error_message']);
@@ -388,8 +398,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         'contact_id' => $contact_id,
         'payment_instrument_id' => $params['payment_instrument_id'],
         'contribution_status_id' => $contribution_status_id,
-//        'trxn_id', // TODO: Set to Commerce order ID or Commerce payment ID?
       );
+      if (!empty($params['trxn_id'])) {
+        $contribution_data['trxn_id'] = $params['trxn_id'];
+      }
 
       if (!empty($params['frequency'])) {
         // Create recurring contribution.

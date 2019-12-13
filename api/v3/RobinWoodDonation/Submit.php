@@ -440,11 +440,22 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Handling membership requests.');
     }
     if (!empty($params['membership_type_id'])) {
+      // Load recurring contribution.
+      if (isset($contribution_recur)) {
+        $contribution_recur_id = $contribution_recur['id'];
+      }
+      elseif (!isset($contribution_recur) && isset($mandate) && $mandate['entity_table'] == 'civicrm_contribution_recur') {
+        $contribution_recur_id = $mandate['entity_id'];
+      }
+      else {
+        $contribution_recur_id = NULL;
+      }
+
       // Create membership.
       $membership = civicrm_api3('Membership', 'create', array(
         'membership_type_id' => $params['membership_type_id'],
         'contact_id' => $contact_id,
-        'contribution_recur_id' => $contribution_recur['id'],
+        'contribution_recur_id' => $contribution_recur_id,
         // TODO: Any more parameters?
       ));
       if ($membership['is_error']) {

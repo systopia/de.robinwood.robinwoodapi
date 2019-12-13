@@ -239,10 +239,6 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_CREDIT_CARD => 'commerce_novalnet_cc',
       CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_PAYPAL => 'commerce_novalnet_paypal',
       CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_SOFORT => 'commerce_novalnet_instantbank',
-      // Test payment methods.
-      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_CREDIT_CARD => 'kreditkarte_testmodus_',
-      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_PAYPAL => 'paypal_testmodus_',
-      CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_SOFORT => 'sofort_berweisung_testmodus_',
     );
     if (!in_array($params['payment_instrument'], $payment_instruments)) {
       throw new Exception(E::ts('Invalid value for parameter %1', array(

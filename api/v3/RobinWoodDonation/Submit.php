@@ -218,18 +218,20 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     }
 
     // Map membership types to membership_type_id values.
-    $membership_types = array(
-      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP => 'AKTIVE_MITGLIEDSCHAFT',
-      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP => 'FOERDERMITGLIEDSCHAFT',
-      CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION => 'DAUERSPENDE',
-    );
-    if (!in_array($params['membership_type'], $membership_types)) {
-      throw new Exception(E::ts('Invalid value for parameter %1', array(
-        1 => 'membership_type',
-      )));
-    }
-    else {
-      $params['membership_type_id'] = array_search($params['membership_type'], $membership_types);
+    if (!empty($params['membership_type'])) {
+      $membership_types = array(
+        CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP => 'AKTIVE_MITGLIEDSCHAFT',
+        CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP => 'FOERDERMITGLIEDSCHAFT',
+        CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION => 'DAUERSPENDE',
+      );
+      if (!in_array($params['membership_type'], $membership_types)) {
+        throw new Exception(E::ts('Invalid value for parameter %1', array(
+          1 => 'membership_type',
+        )));
+      }
+      else {
+        $params['membership_type_id'] = array_search($params['membership_type'], $membership_types);
+      }
     }
 
     // Map payment methods to payment_instrument_id values.

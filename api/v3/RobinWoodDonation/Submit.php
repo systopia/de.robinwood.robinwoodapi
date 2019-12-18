@@ -416,8 +416,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
           $contribution_status_id = CRM_RobinWoodAPI_Submission::CONTRIBUTION_STATUS_ID_PENDING;
           break;
         default:
-          // TODO: Should this be "Completed" instead?
-          $contribution_status_id = CRM_RobinWoodAPI_Submission::CONTRIBUTION_STATUS_ID_IN_PROGRESS;
+          $contribution_status_id = CRM_RobinWoodAPI_Submission::CONTRIBUTION_STATUS_ID_COMPLETED;
           break;
       }
 

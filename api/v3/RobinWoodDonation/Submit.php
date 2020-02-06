@@ -494,7 +494,6 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       $membership = civicrm_api3('Membership', 'create', array(
         'membership_type_id' => $params['membership_type_id'],
         'contact_id' => $contact_id,
-        'contribution_recur_id' => $contribution_recur_id,
         // TODO: Any more parameters?
       ));
       if ($membership['is_error']) {
@@ -505,6 +504,9 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
         CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created Membership with ID ' . $result['membership_id']);
       }
+
+      // TODO: Actively assign contributions made during this API call with the
+      //       membership (MembershipPayment.create)!
     }
 
     return civicrm_api3_create_success($result);

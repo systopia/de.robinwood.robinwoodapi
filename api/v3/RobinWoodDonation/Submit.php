@@ -153,6 +153,18 @@ function _civicrm_api3_robin_wood_donation_Submit_spec(&$params) {
     'api.required' => 0,
     'description' => 'The unique ID of this transaction, which it is identifiable with in the source system.',
   );
+  $params['newsletter_email'] = array(
+    'name' => 'newsletter_email',
+    'title' => 'newsletter_email',
+    'type' => CRM_Utils_Type::T_BOOLEAN,
+    'description' => 'Whether the contact wishes to subscribe to the e-mail newsletter.',
+  );
+  $params['newsletter_postal'] = array(
+    'name' => 'newsletter_postal',
+    'title' => 'newsletter_postal',
+    'type' => CRM_Utils_Type::T_BOOLEAN,
+    'description' => 'Whether the contact wishes to subscribe to the postal newsletter.',
+  );
 }
 
 /**
@@ -331,7 +343,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       if ($group_contact_email['is_error']) {
         throw new Exception($group_contact_email['error_message']);
       }
-      $result['group_contact_email'] = $group_contact_email['id'];
+      $result['newsletter_email_status'] = $group_contact_email['total_count'];
 
       if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
         CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created GroupContact with ID ' . $result['group_contact_email']);
@@ -340,18 +352,32 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
 
     // Subscribe to postal newsletter.
     if (!empty($params['newsletter_postal'])) {
-      $group_contact_postal = civicrm_api3('GroupContact', 'create', array(
-        'contact_id' => $contact_id,
-        'group_id' => CRM_RobinWoodAPI_Submission::GROUP_ID_NEWSLETTER_POSTAL,
-        'status' => 'Added',
+      $custom_field = civicrm_api3('CustomField', 'getsingle', array(
+        'custom_group_id' => CRM_RobinWoodAPI_Submission::CUSTOM_GROUP_ID_NEWSLETTER_POSTAL,
+        'name' => CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_NAME_NEWSLETTER_POSTAL,
       ));
-      if ($group_contact_postal['is_error']) {
-        throw new Exception($group_contact_postal['error_message']);
+
+      $custom_field_value_options = civicrm_api3('Contact', 'getoptions', array(
+        'field' => 'custom_' . $custom_field['id'],
+      ));
+      if ($custom_field_value_options['is_error']) {
+        throw new Exception($custom_field_value_options['error_message']);
       }
-      $result['group_contact_postal'] = $group_contact_postal['id'];
+      $custom_field_value_option_keys = array_keys($custom_field_value_options['values']);
+
+      // TODO: This does not work, although it's correct, compared to API explorer syntax.
+      $custom_value = civicrm_api3('CustomValue', 'create', array(
+        'entity_id' => $contact_id,
+        'custom_' . $custom_field['id'] => array($custom_field_value_option_keys[0]),
+      ));
+      if ($custom_value['is_error']) {
+        throw new Exception($custom_value['error_message']);
+      }
+
+      $result['newsletter_postal_status'] = $custom_field_value_option_keys[0];
 
       if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created GroupContact with ID ' . $result['group_contact_postal']);
+        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Set postal newsletter custom field value to ["' . $result['newsletter_postal_status'] . '"]');
       }
     }
 

@@ -48,8 +48,9 @@ class CRM_RobinWoodAPI_Submission {
 
   const GROUP_ID_NEWSLETTER_EMAIL = 28;
 
-  // TODO: Set to actual group ID.
-  const GROUP_ID_NEWSLETTER_POSTAL = NULL;
+  const CUSTOM_GROUP_ID_NEWSLETTER_POSTAL = 5;
+
+  const CUSTOM_FIELD_NAME_NEWSLETTER_POSTAL = 'kampangen_per_post';
 
   const GENDER_ID_FEMALE = 1;
 

@@ -365,7 +365,6 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       }
       $custom_field_value_option_keys = array_keys($custom_field_value_options['values']);
 
-      // TODO: This does not work, although it's correct, compared to API explorer syntax.
       $custom_value = civicrm_api3('CustomValue', 'create', array(
         'entity_id' => $contact_id,
         'custom_' . $custom_field['id'] => array($custom_field_value_option_keys[0]),

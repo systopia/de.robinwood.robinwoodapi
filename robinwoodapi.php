@@ -137,6 +137,25 @@ function robinwoodapi_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _robinwoodapi_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
+/**
+ * Implements hook_civicrm_permission().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_permission
+ */
+function robinwoodapi_civicrm_permission(&$permissions) {
+    $permissions['access robinwood api donation.submit'] = 'RobinWood API: Access Donation.Submit API';
+}
+
+/**
+ * Implements hook_civicrm_alterAPIPermissions().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterAPIPermissions
+ */
+function robinwoodapi_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+    // Restrict API calls to the permission.
+    $permissions['robin_wood_donation']['submit'] = array('access robinwood api donation.submit');
+}
+
 // --- Functions below this ship commented out. Uncomment as required. ---
 
 /**

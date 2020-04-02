@@ -536,10 +536,22 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         $contribution_recur_id = NULL;
       }
 
+      // Find custom fields on memberships.
+        $custom_field_jahresbeitrag = civicrm_api3('CustomField', 'getsingle', array(
+            'custom_group_id' => CRM_RobinWoodAPI_Submission::CUSTOM_GROUP_ID_BEITRAGSINFORMATIONEN,
+            'name' => CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_NAME_JAHRESBEITRAG,
+        ));
+        $custom_field_zahlungsturnus = civicrm_api3('CustomField', 'getsingle', array(
+            'custom_group_id' => CRM_RobinWoodAPI_Submission::CUSTOM_GROUP_ID_BEITRAGSINFORMATIONEN,
+            'name' => CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_NAME_ZAHLUNGSTURNUS,
+        ));
+
       // Create membership.
       $membership = civicrm_api3('Membership', 'create', array(
         'membership_type_id' => $params['membership_type_id'],
         'contact_id' => $contact_id,
+          'custom_' . $custom_field_jahresbeitrag['id'] => $params['amount'] / 100,
+          'custom_' . $custom_field_zahlungsturnus['id'] => $params['frequency'],
         // TODO: Any more parameters?
       ));
       if ($membership['is_error']) {

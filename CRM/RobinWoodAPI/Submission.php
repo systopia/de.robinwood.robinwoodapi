@@ -50,7 +50,13 @@ class CRM_RobinWoodAPI_Submission {
 
   const CUSTOM_GROUP_ID_NEWSLETTER_POSTAL = 5;
 
-  const CUSTOM_FIELD_NAME_NEWSLETTER_POSTAL = 'kampangen_per_post';
+  const CUSTOM_FIELD_NAME_NEWSLETTER_POSTAL = 'Kampangen_per_Post';
+
+  const CUSTOM_GROUP_ID_BEITRAGSINFORMATIONEN = 10;
+
+  const CUSTOM_FIELD_NAME_JAHRESBEITRAG = 'Jahresbeitrag';
+
+  const CUSTOM_FIELD_NAME_ZAHLUNGSTURNUS = 'Zahlungsturnus';
 
   const GENDER_ID_FEMALE = 1;
 

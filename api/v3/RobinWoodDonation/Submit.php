@@ -547,13 +547,16 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         ));
 
       // Create membership.
-      $membership = civicrm_api3('Membership', 'create', array(
+      $membership_data = array(
         'membership_type_id' => $params['membership_type_id'],
         'contact_id' => $contact_id,
-          'custom_' . $custom_field_jahresbeitrag['id'] => $params['amount'] / 100,
-          'custom_' . $custom_field_zahlungsturnus['id'] => $params['frequency'],
+        'custom_' . $custom_field_jahresbeitrag['id'] => $params['amount'] / 100,
+        'custom_' . $custom_field_zahlungsturnus['id'] => $params['frequency'],
+        'start_date' => date('Ymd'), // TODO: First day of next month.
+        'end_date' => date('Ymd'),
         // TODO: Any more parameters?
-      ));
+      );
+      $membership = civicrm_api3('Membership', 'create', $membership_data);
       if ($membership['is_error']) {
         throw new Exception($membership['error_message']);
       }

@@ -546,14 +546,30 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
             'name' => CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_NAME_ZAHLUNGSTURNUS,
         ));
 
-      // Create membership.
+      // Create membership, starting first day of next month. When using SEPA,
+      // add the notice period before calculating membership start date.
+      if ($params['payment_instrument_id'] == 'sepa') {
+        if ($creditor = CRM_Sepa_Logic_Settings::defaultCreditor()) {
+          $creditor_id = $creditor->id;
+        }
+        $sepa_notice_days = CRM_Sepa_Logic_Settings::getSetting(
+          'FRST_notice',
+          $creditor_id
+        );
+        $reference_date = date_create('today +' . $sepa_notice_days . ' days');
+        $start_date = $reference_date->modify('first day of next month');
+      }
+      else {
+        $start_date = date_create('first day of next month');
+      }
+      $start_date = $start_date->format('Ymd');
       $membership_data = array(
         'membership_type_id' => $params['membership_type_id'],
         'contact_id' => $contact_id,
         'custom_' . $custom_field_jahresbeitrag['id'] => $params['amount'] / 100,
         'custom_' . $custom_field_zahlungsturnus['id'] => $params['frequency'],
-        'start_date' => date('Ymd'), // TODO: First day of next month.
-        'end_date' => date('Ymd'),
+        'start_date' => $start_date,
+        'end_date' => $start_date,
         // TODO: Any more parameters?
       );
       $membership = civicrm_api3('Membership', 'create', $membership_data);

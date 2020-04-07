@@ -486,8 +486,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
 
         $contribution_recur_data = $contribution_data + array(
           'frequency_unit' => 'month',
-          // Calculate from number of installments per year.
-          'frequency_interval' => (12 / $params['frequency']),
+          'frequency_interval' => $params['frequency'],
           );
         $contribution_recur = civicrm_api3('ContributionRecur', 'create', $contribution_recur_data);
         if ($contribution_recur['is_error']) {

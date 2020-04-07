@@ -548,20 +548,23 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
 
       // Create membership, starting first day of next month. When using SEPA,
       // add the notice period before calculating membership start date.
+      $reference_date = date_create('today');
       if ($params['payment_instrument_id'] == 'sepa') {
         if ($creditor = CRM_Sepa_Logic_Settings::defaultCreditor()) {
           $creditor_id = $creditor->id;
         }
+        else {
+            $creditor_id = null;
+        }
         $sepa_notice_days = CRM_Sepa_Logic_Settings::getSetting(
-          'FRST_notice',
+          'batching_FRST_notice',
           $creditor_id
         );
-        $reference_date = date_create('today +' . $sepa_notice_days . ' days');
-        $start_date = $reference_date->modify('first day of next month');
+        if (is_numeric($sepa_notice_days)) {
+            $reference_date = $reference_date->modify('+' . $sepa_notice_days . ' days');
+        }
       }
-      else {
-        $start_date = date_create('first day of next month');
-      }
+      $start_date = $reference_date->modify('first day of next month');
       $start_date = $start_date->format('Ymd');
       $membership_data = array(
         'membership_type_id' => $params['membership_type_id'],

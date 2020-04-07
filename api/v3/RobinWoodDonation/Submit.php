@@ -308,6 +308,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       'country_id',
       'email',
       'gender_id',
+      'iban'
     ), TRUE)) + array(
         'custom_' . CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFT => $option_value_herkunft['value'],
         'custom_' . CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFTSDATUM => date('Ymd'),

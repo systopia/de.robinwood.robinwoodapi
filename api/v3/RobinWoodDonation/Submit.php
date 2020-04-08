@@ -569,7 +569,8 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       $membership_data = array(
         'membership_type_id' => $params['membership_type_id'],
         'contact_id' => $contact_id,
-        'custom_' . $custom_field_jahresbeitrag['id'] => $params['amount'] / 100,
+        // Yearly amount = amount * 12 months / frequency in months / 100 cents.
+        'custom_' . $custom_field_jahresbeitrag['id'] => $params['amount'] * 12 / $params['frequency'] / 100,
         'custom_' . $custom_field_zahlungsturnus['id'] => $params['frequency'],
         'start_date' => $start_date,
         'end_date' => $start_date,

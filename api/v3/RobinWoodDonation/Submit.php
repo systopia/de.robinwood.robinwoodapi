@@ -435,26 +435,26 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created SepaMandate with ID ' . $result['mandate_id']);
       }
 
-      // TODO: Create Banking account, if it doesn't exist and CiviBanking is enabled.
-//      try {
-//        $bank_account = civicrm_api3('BankingAccount', 'getorcreate', array(
-//          'reference' => $params['iban'],
-//          'bic' => $params['bic'],
-//          'contact_id' => $contact_id,
-//          'reference_type' => 'IBAN',
-//        ));
-//        if ($bank_account['is_error']) {
-//          throw new Exception($bank_account['error_message']);
-//        }
-//        $result['bank_account_id'] = $bank_account['id'];
-//
-//        if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-//          CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created/Identified bankingAccount with ID ' . $result['bank_account_id']);
-//        }
-//      }
-//      catch (Exception $exception) {
-//        $result['bank_account'] = $exception->getMessage();
-//      }
+      // Create Banking account, if it doesn't exist and CiviBanking is enabled.
+      try {
+        $bank_account = civicrm_api3('BankingAccount', 'getorcreate', array(
+          'reference' => $params['iban'],
+          'bic' => $params['bic'],
+          'contact_id' => $contact_id,
+          'reference_type' => 'IBAN',
+        ));
+        if ($bank_account['is_error']) {
+          throw new Exception($bank_account['error_message']);
+        }
+        $result['bank_account_id'] = $bank_account['id'];
+
+        if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
+          CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created/Identified bankingAccount with ID ' . $result['bank_account_id']);
+        }
+      }
+      catch (Exception $exception) {
+        $result['bank_account'] = $exception->getMessage();
+      }
     }
     else {
       // Create (recurring) contribution for other payment instruments.

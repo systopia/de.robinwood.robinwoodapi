@@ -271,6 +271,27 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     // Resolve country ISO code.
     CRM_RobinWoodAPI_Submission::resolveCountry($params);
 
+    // Start date for memberships and/or SEPA mandates: first day of next month.
+    // When using SEPA, add the notice period before calculating the start date.
+    $reference_date = date_create('today');
+    if ($params['payment_instrument_id'] == 'sepa') {
+      if ($creditor = CRM_Sepa_Logic_Settings::defaultCreditor()) {
+        $creditor_id = $creditor->id;
+      }
+      else {
+        $creditor_id = null;
+      }
+      $sepa_notice_days = CRM_Sepa_Logic_Settings::getSetting(
+        'batching_FRST_notice',
+        $creditor_id
+      );
+      if (is_numeric($sepa_notice_days)) {
+        $reference_date = $reference_date->modify('+' . $sepa_notice_days . ' days');
+      }
+    }
+    $start_date = $reference_date->modify('first day of next month');
+    $start_date = $start_date->format('Ymd');
+
     /***************************************************************************
      * Identify and update or create contact using XCM.                        *
      **************************************************************************/
@@ -421,6 +442,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         'financial_type_id' => $financial_type_id,
         'frequency_unit' => 'month',
         'frequency_interval' => $params['frequency'],
+        'date' => $start_date,
       );
       if (!empty($params['trxn_id'])) {
         $mandate_data['trxn_id'] = $params['trxn_id'];
@@ -546,26 +568,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
             'name' => CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_NAME_ZAHLUNGSTURNUS,
         ));
 
-      // Create membership, starting first day of next month. When using SEPA,
-      // add the notice period before calculating membership start date.
-      $reference_date = date_create('today');
-      if ($params['payment_instrument_id'] == 'sepa') {
-        if ($creditor = CRM_Sepa_Logic_Settings::defaultCreditor()) {
-          $creditor_id = $creditor->id;
-        }
-        else {
-            $creditor_id = null;
-        }
-        $sepa_notice_days = CRM_Sepa_Logic_Settings::getSetting(
-          'batching_FRST_notice',
-          $creditor_id
-        );
-        if (is_numeric($sepa_notice_days)) {
-            $reference_date = $reference_date->modify('+' . $sepa_notice_days . ' days');
-        }
-      }
-      $start_date = $reference_date->modify('first day of next month');
-      $start_date = $start_date->format('Ymd');
+      // Create membership.
       $membership_data = array(
         'membership_type_id' => $params['membership_type_id'],
         'contact_id' => $contact_id,

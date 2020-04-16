@@ -442,7 +442,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         'financial_type_id' => $financial_type_id,
         'frequency_unit' => 'month',
         'frequency_interval' => $params['frequency'],
-        'date' => $start_date,
+        'start_date' => $start_date,
+        'date' => date('Ymd'),
+        'creation_date' => date('Ymd'),
+        'validation_date' => date('Ymd'),
       );
       if (!empty($params['trxn_id'])) {
         $mandate_data['trxn_id'] = $params['trxn_id'];

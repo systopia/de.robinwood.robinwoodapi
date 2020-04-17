@@ -51,7 +51,7 @@ function _civicrm_api3_robin_wood_donation_Submit_spec(&$params) {
     'name' => 'postal_code',
     'title' => 'Postal code',
     'type' => CRM_Utils_Type::T_STRING,
-    'api.required' => 1,
+    'api.required' => 0,
     'description' => 'The contact\'s postal code.',
   );
   $params['city'] = array(

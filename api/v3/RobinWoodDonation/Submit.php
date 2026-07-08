@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_RobinWoodAPI_ExtensionUtil as E;
 
 /**
@@ -26,145 +28,145 @@ use CRM_RobinWoodAPI_ExtensionUtil as E;
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/API+Architecture+Standards
  */
 function _civicrm_api3_robin_wood_donation_Submit_spec(&$params) {
-  $params['first_name'] = array(
+  $params['first_name'] = [
     'name' => 'first_name',
     'title' => 'First name',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 1,
     'description' => 'The contact\'s first name.',
-  );
-  $params['last_name'] = array(
+  ];
+  $params['last_name'] = [
     'name' => 'last_name',
     'title' => 'Last name',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 1,
     'description' => 'The contact\'s last name.',
-  );
-  $params['street_address'] = array(
+  ];
+  $params['street_address'] = [
     'name' => 'street_address',
     'title' => 'Street address',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 1,
     'description' => 'The contact\'s street address.',
-  );
-  $params['postal_code'] = array(
+  ];
+  $params['postal_code'] = [
     'name' => 'postal_code',
     'title' => 'Postal code',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 0,
     'description' => 'The contact\'s postal code.',
-  );
-  $params['city'] = array(
+  ];
+  $params['city'] = [
     'name' => 'city',
     'title' => 'City',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 1,
     'description' => 'The contact\'s city.',
-  );
-  $params['country'] = array(
+  ];
+  $params['country'] = [
     'name' => 'country',
     'title' => 'Country',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 0,
     'api.default' => 'DE',
     'description' => 'The contact\'s country.',
-  );
-  $params['supplemental_address_1'] = array(
+  ];
+  $params['supplemental_address_1'] = [
     'name' => 'supplemental_address_1',
     'title' => 'Supplemental address 1',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 0,
     'description' => 'The contact\'s supplemental address 1.',
-  );
-  $params['supplemental_address_2'] = array(
+  ];
+  $params['supplemental_address_2'] = [
     'name' => 'supplemental_address_2',
     'title' => 'Supplemental address 2',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 0,
     'description' => 'The contact\'s supplemental address 2.',
-  );
-  $params['email'] = array(
+  ];
+  $params['email'] = [
     'name' => 'email',
     'title' => 'E-mail address',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 0,
     'description' => 'The contact\'s e-mail address.',
-  );
-  $params['phone'] = array(
+  ];
+  $params['phone'] = [
     'name' => 'phone',
     'title' => 'Phone number',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 0,
     'description' => 'The contact\'s phone number.',
-  );
-  $params['gender_id'] = array(
+  ];
+  $params['gender_id'] = [
     'name' => 'gender_id',
     'title' => 'Gender',
     'type' => CRM_Utils_Type::T_INT,
     'api.required' => 1,
     'description' => 'The contact\'s gender.',
-  );
-  $params['membership_type'] = array(
+  ];
+  $params['membership_type'] = [
     'name' => 'membership_type',
     'title' => 'Membership type',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 0,
     'description' => 'The type of the membership to create for the contact.',
-  );
-  $params['payment_instrument'] = array(
+  ];
+  $params['payment_instrument'] = [
     'name' => 'payment_instrument',
     'title' => 'Payment method',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 1,
     'description' => 'The payment method for the donation or membership fee.',
-  );
-  $params['iban'] = array(
+  ];
+  $params['iban'] = [
     'name' => 'iban',
     'title' => 'IBAN',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 0,
     'description' => 'The IBAN for the SEPA mandate to create for the contact.',
-  );
-  $params['bic'] = array(
+  ];
+  $params['bic'] = [
     'name' => 'bic',
     'title' => 'BIC',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 0,
     'description' => 'The BIC for the SEPA mandate to create for the contact.',
-  );
-  $params['amount'] = array(
+  ];
+  $params['amount'] = [
     'name' => 'amount',
     'title' => 'Amount',
     'type' => CRM_Utils_Type::T_INT,
     'api.required' => 1,
     'description' => 'The amount (in EUR cents) of the donation or membership fee.',
-  );
-  $params['frequency'] = array(
+  ];
+  $params['frequency'] = [
     'name' => 'frequency',
     'title' => 'Frequency',
     'type' => CRM_Utils_Type::T_INT,
     'api.required' => 0,
     'description' => 'The number of installments per year for the donation or membership fee.',
-  );
-  $params['trxn_id'] = array(
+  ];
+  $params['trxn_id'] = [
     'name' => 'trxn_id',
     'title' => 'trxn_id',
     'type' => CRM_Utils_Type::T_STRING,
     'api.required' => 0,
     'description' => 'The unique ID of this transaction, which it is identifiable with in the source system.',
-  );
-  $params['newsletter_email'] = array(
+  ];
+  $params['newsletter_email'] = [
     'name' => 'newsletter_email',
     'title' => 'newsletter_email',
     'type' => CRM_Utils_Type::T_BOOLEAN,
     'description' => 'Whether the contact wishes to subscribe to the e-mail newsletter.',
-  );
-  $params['newsletter_postal'] = array(
+  ];
+  $params['newsletter_postal'] = [
     'name' => 'newsletter_postal',
     'title' => 'newsletter_postal',
     'type' => CRM_Utils_Type::T_BOOLEAN,
     'description' => 'Whether the contact wishes to subscribe to the postal newsletter.',
-  );
+  ];
 }
 
 /**
@@ -180,66 +182,66 @@ function _civicrm_api3_robin_wood_donation_Submit_spec(&$params) {
 function civicrm_api3_robin_wood_donation_Submit($params) {
   // Log the API call to the CiviCRM debug log.
   if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-    CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".json_encode($params, JSON_PRETTY_PRINT));
+    Civi::log()->debug('RobinWoodDonation.Submit:' . "\n" . json_encode($params, JSON_PRETTY_PRINT));
   }
 
   try {
-    $result = array();
+    $result = [];
 
     /***************************************************************************
      * Validate and prepare parameters.                                        *
      **************************************************************************/
     if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Validating parameters.');
+      Civi::log()->debug('RobinWoodDonation.Submit:' . "\n" . 'Validating parameters.');
     }
     // Validate membership type ID and frequency interdependency.
     if (!empty($params['membership_type']) && empty($params['frequency'])) {
-      throw new Exception((E::ts('Required parameter %1 missing.', array(
+      throw new Exception((E::ts('Required parameter %1 missing.', [
         1 => 'frequency',
-      ))));
+      ])));
     }
     if (!empty($params['frequency']) && empty($params['membership_type'])) {
-      throw new Exception((E::ts('Required parameter %1 missing.', array(
+      throw new Exception((E::ts('Required parameter %1 missing.', [
         1 => 'membership_type',
-      ))));
+      ])));
     }
 
     // Validate IBAN and BIC for SEPA payment method.
     if ($params['payment_instrument'] == 'sepa') {
-      foreach (array(
-                 'iban',
-                 'bic',
-               ) as $required_param) {
+      foreach ([
+        'iban',
+        'bic',
+      ] as $required_param) {
         if (empty($params[$required_param])) {
-          throw new Exception(E::ts('Required parameter %1 missing.', array(
+          throw new Exception(E::ts('Required parameter %1 missing.', [
             1 => $required_param,
-          )));
+          ]));
         }
       }
     }
 
     // Validate allowed values for fields.
-    if (!in_array($params['gender_id'], array(
+    if (!in_array($params['gender_id'], [
       CRM_RobinWoodAPI_Submission::GENDER_ID_FEMALE,
       CRM_RobinWoodAPI_Submission::GENDER_ID_MALE,
       CRM_RobinWoodAPI_Submission::GENDER_ID_NEUTRAL,
-    ))) {
-      throw new Exception(E::ts('Invalid value for parameter %1', array(
+    ])) {
+      throw new Exception(E::ts('Invalid value for parameter %1', [
         1 => 'gender_id',
-      )));
+      ]));
     }
 
     // Map membership types to membership_type_id values.
     if (!empty($params['membership_type'])) {
-      $membership_types = array(
+      $membership_types = [
         CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP => 'AKTIVE_MITGLIEDSCHAFT',
         CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP => 'FOERDERMITGLIEDSCHAFT',
         CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION => 'DAUERSPENDE',
-      );
+      ];
       if (!in_array($params['membership_type'], $membership_types)) {
-        throw new Exception(E::ts('Invalid value for parameter %1', array(
+        throw new Exception(E::ts('Invalid value for parameter %1', [
           1 => 'membership_type',
-        )));
+        ]));
       }
       else {
         $params['membership_type_id'] = array_search($params['membership_type'], $membership_types);
@@ -247,7 +249,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     }
 
     // Map payment methods to payment_instrument_id values.
-    $payment_instruments = array(
+    $payment_instruments = [
       'sepa_direct_debit' => 'sepa',
       'dauerauftrag' => CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_STANDING_ORDER,
       'commerce_novalnet_cc' => CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_CREDIT_CARD,
@@ -256,11 +258,11 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       'kreditkarte_testmodus_' => CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_CREDIT_CARD,
       'paypal_testmodus_' => CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_PAYPAL,
       'sofort_berweisung_testmodus_' => CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_NOVALNET_SOFORT,
-    );
+    ];
     if (!array_key_exists($params['payment_instrument'], $payment_instruments)) {
-      throw new Exception(E::ts('Invalid value for parameter %1', array(
+      throw new Exception(E::ts('Invalid value for parameter %1', [
         1 => 'payment_instrument',
-      )));
+      ]));
     }
     else {
       $params['payment_instrument_id'] = $payment_instruments[$params['payment_instrument']];
@@ -277,7 +279,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         $creditor_id = $creditor->id;
       }
       else {
-        $creditor_id = null;
+        $creditor_id = NULL;
       }
       $sepa_notice_days = CRM_Sepa_Logic_Settings::getSetting(
         'batching_FRST_notice',
@@ -294,7 +296,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
      * Identify and update or create contact using XCM.                        *
      **************************************************************************/
     if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Identifying or creating contact.');
+      Civi::log()->debug('RobinWoodDonation.Submit:' . "\n" . 'Identifying or creating contact.');
     }
     // Set "Herkunft" custom field value depending on submission type.
     if (!empty($params['membership_type_id'])) {
@@ -302,23 +304,29 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION:
           $option_value_id_herkunft = CRM_RobinWoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_REGULAR_DONATION;
           break;
+
         case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP:
           $option_value_id_herkunft = CRM_RobinWoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_SPONSOR_MEMBERSHIP;
           break;
+
         case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP:
           $option_value_id_herkunft = CRM_RobinWoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_ACTIVE_MEMBERSHIP;
+          break;
+
+        default:
+          $option_value_id_herkunft = CRM_RobinWoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_DONATION;
           break;
       }
     }
     else {
       $option_value_id_herkunft = CRM_RobinWoodAPI_Submission::OPTION_VALUE_ID_HERKUNFT_DONATION;
     }
-    $option_value_herkunft = civicrm_api3('OptionValue', 'getsingle', array(
+    $option_value_herkunft = civicrm_api3('OptionValue', 'getsingle', [
       'id' => $option_value_id_herkunft,
-    ));
+    ]);
 
     // Identify and update or create contact.
-    $contact_data = array_intersect_key($params, array_fill_keys(array(
+    $contact_data = array_intersect_key($params, array_fill_keys([
       'first_name',
       'last_name',
       'street_address',
@@ -327,11 +335,11 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       'country_id',
       'email',
       'gender_id',
-      'iban'
-    ), TRUE)) + array(
-        'custom_' . CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFT => $option_value_herkunft['value'],
-        'custom_' . CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFTSDATUM => date('Ymd'),
-      );
+      'iban',
+    ], TRUE)) + [
+      'custom_' . CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFT => $option_value_herkunft['value'],
+      'custom_' . CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_ID_HERKUNFTSDATUM => date('Ymd'),
+    ];
     $xcm_result = civicrm_api3(
       'Contact',
       'getorcreate',
@@ -344,51 +352,57 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     $result['contact_id'] = $contact_id;
 
     if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Identified or created Contact with ID ' . $result['contact_id']);
+      Civi::log()->debug(
+        'RobinWoodDonation.Submit:' . "\n"
+        . 'Identified or created Contact with ID ' . $result['contact_id']
+      );
     }
 
     /***************************************************************************
      * Subscribe to newsletters.                                               *
      **************************************************************************/
     if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Subscribing to newsletters.');
+      Civi::log()->debug('RobinWoodDonation.Submit:' . "\n" . 'Subscribing to newsletters.');
     }
     // Subscribe to e-mail newsletter.
     if (!empty($params['newsletter_email'])) {
-      $group_contact_email = civicrm_api3('GroupContact', 'create', array(
+      $group_contact_email = civicrm_api3('GroupContact', 'create', [
         'contact_id' => $contact_id,
         'group_id' => CRM_RobinWoodAPI_Submission::GROUP_ID_NEWSLETTER_EMAIL,
         'status' => 'Added',
-      ));
+      ]);
       if ($group_contact_email['is_error']) {
         throw new Exception($group_contact_email['error_message']);
       }
       $result['newsletter_email_status'] = $group_contact_email['total_count'];
 
       if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created GroupContact with ID ' . $result['group_contact_email']);
+        Civi::log()->debug(
+          'RobinWoodDonation.Submit:' . "\n"
+          . 'Created GroupContact with ID ' . $result['group_contact_email']
+        );
       }
     }
 
     // Subscribe to postal newsletter.
     if (!empty($params['newsletter_postal'])) {
-      $custom_field = civicrm_api3('CustomField', 'getsingle', array(
+      $custom_field = civicrm_api3('CustomField', 'getsingle', [
         'custom_group_id' => CRM_RobinWoodAPI_Submission::CUSTOM_GROUP_ID_NEWSLETTER_POSTAL,
         'name' => CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_NAME_NEWSLETTER_POSTAL,
-      ));
+      ]);
 
-      $custom_field_value_options = civicrm_api3('Contact', 'getoptions', array(
+      $custom_field_value_options = civicrm_api3('Contact', 'getoptions', [
         'field' => 'custom_' . $custom_field['id'],
-      ));
+      ]);
       if ($custom_field_value_options['is_error']) {
         throw new Exception($custom_field_value_options['error_message']);
       }
       $custom_field_value_option_keys = array_keys($custom_field_value_options['values']);
 
-      $custom_value = civicrm_api3('CustomValue', 'create', array(
+      $custom_value = civicrm_api3('CustomValue', 'create', [
         'entity_id' => $contact_id,
-        'custom_' . $custom_field['id'] => array($custom_field_value_option_keys[0]),
-      ));
+        'custom_' . $custom_field['id'] => [$custom_field_value_option_keys[0]],
+      ]);
       if ($custom_value['is_error']) {
         throw new Exception($custom_value['error_message']);
       }
@@ -396,7 +410,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       $result['newsletter_postal_status'] = $custom_field_value_option_keys[0];
 
       if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Set postal newsletter custom field value to ["' . $result['newsletter_postal_status'] . '"]');
+        Civi::log()->debug(
+          'RobinWoodDonation.Submit:' . "\n"
+          . 'Set postal newsletter custom field value to ["' . $result['newsletter_postal_status'] . '"]'
+        );
       }
     }
 
@@ -404,7 +421,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
      * Create SEPA mandate or (recurring) contribution.                        *
      **************************************************************************/
     if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Creating SEPA mandate and/or contribution.');
+      Civi::log()->debug('RobinWoodDonation.Submit:' . "\n" . 'Creating SEPA mandate and/or contribution.');
     }
 
     // Determine financial type from submitted membership type ID.
@@ -413,11 +430,17 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_REGULAR_DONATION:
           $financial_type_id = CRM_RobinWoodAPI_Submission::FINANCIAL_TYPE_ID_REGULAR_DONATION;
           break;
+
         case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_SPONSOR_MEMBERSHIP:
           $financial_type_id = CRM_RobinWoodAPI_Submission::FINANCIAL_TYPE_ID_SPONSOR_MEMBERSHIP_FEE;
           break;
+
         case CRM_RobinWoodAPI_Submission::MEMBERSHIP_TYPE_ID_ACTIVE_MEMBERSHIP:
           $financial_type_id = CRM_RobinWoodAPI_Submission::FINANCIAL_TYPE_ID_ACTIVE_MEMBERSHIP_FEE;
+          break;
+
+        default:
+          $financial_type_id = CRM_RobinWoodAPI_Submission::FINANCIAL_TYPE_ID_DONATION;
           break;
       }
     }
@@ -428,10 +451,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
     if ($params['payment_instrument_id'] == 'sepa') {
       // Create SEPA mandate using SepaMandate.createfull API.
       if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Creating SEPA mandate.');
+        Civi::log()->debug('RobinWoodDonation.Submit:' . "\n" . 'Creating SEPA mandate.');
       }
 
-      $mandate_data = array(
+      $mandate_data = [
         'contact_id' => $contact_id,
         'type' => (empty($params['frequency']) ? 'OOFF' : 'RCUR'),
         'iban' => $params['iban'],
@@ -444,7 +467,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         'date' => date('Ymd'),
         'creation_date' => date('Ymd'),
         'validation_date' => date('Ymd'),
-      );
+      ];
       if (!empty($params['trxn_id'])) {
         $mandate_data['trxn_id'] = $params['trxn_id'];
       }
@@ -455,24 +478,27 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       $result['mandate_id'] = $mandate['id'];
 
       if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created SepaMandate with ID ' . $result['mandate_id']);
+        Civi::log()->debug('RobinWoodDonation.Submit:' . "\n" . 'Created SepaMandate with ID ' . $result['mandate_id']);
       }
 
       // Create Banking account, if it doesn't exist and CiviBanking is enabled.
       try {
-        $bank_account = civicrm_api3('BankingAccount', 'getorcreate', array(
+        $bank_account = civicrm_api3('BankingAccount', 'getorcreate', [
           'reference' => $params['iban'],
           'bic' => $params['bic'],
           'contact_id' => $contact_id,
           'reference_type' => 'IBAN',
-        ));
+        ]);
         if ($bank_account['is_error']) {
           throw new Exception($bank_account['error_message']);
         }
         $result['bank_account_id'] = $bank_account['id'];
 
         if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-          CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created/Identified bankingAccount with ID ' . $result['bank_account_id']);
+          Civi::log()->debug(
+            'RobinWoodDonation.Submit:' . "\n"
+            . 'Created/Identified bankingAccount with ID ' . $result['bank_account_id']
+          );
         }
       }
       catch (Exception $exception) {
@@ -485,19 +511,20 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         case CRM_RobinWoodAPI_Submission::PAYMENT_INSTRUMENT_ID_STANDING_ORDER:
           $contribution_status_id = CRM_RobinWoodAPI_Submission::CONTRIBUTION_STATUS_ID_PENDING;
           break;
+
         default:
           $contribution_status_id = CRM_RobinWoodAPI_Submission::CONTRIBUTION_STATUS_ID_COMPLETED;
           break;
       }
 
-      $contribution_data = array(
+      $contribution_data = [
         'financial_type_id' => $financial_type_id,
         'amount' => $params['amount'] / 100,
         'total_amount' => $params['amount'] / 100,
         'contact_id' => $contact_id,
         'payment_instrument_id' => $params['payment_instrument_id'],
         'contribution_status_id' => $contribution_status_id,
-      );
+      ];
       if (!empty($params['trxn_id'])) {
         $contribution_data['trxn_id'] = $params['trxn_id'];
       }
@@ -505,13 +532,13 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       if (!empty($params['frequency'])) {
         // Create recurring contribution.
         if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-          CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Creating recurring contribution.');
+          Civi::log()->debug('RobinWoodDonation.Submit:' . "\n" . 'Creating recurring contribution.');
         }
 
-        $contribution_recur_data = $contribution_data + array(
+        $contribution_recur_data = $contribution_data + [
           'frequency_unit' => 'month',
           'frequency_interval' => $params['frequency'],
-          );
+        ];
         $contribution_recur = civicrm_api3('ContributionRecur', 'create', $contribution_recur_data);
         if ($contribution_recur['is_error']) {
           throw new Exception($contribution_recur['error_message']);
@@ -521,13 +548,16 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         $result['contribution_recur_id'] = $contribution_recur['id'];
 
         if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-          CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created ContributionRecur with ID ' . $result['contribution_recur_id']);
+          Civi::log()->debug(
+            'RobinWoodDonation.Submit:' . "\n"
+            . 'Created ContributionRecur with ID ' . $result['contribution_recur_id']
+          );
         }
       }
 
       // Create contribution.
       if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Creating contribution.');
+        Civi::log()->debug('RobinWoodDonation.Submit:' . "\n" . 'Creating contribution.');
       }
 
       $contribution = civicrm_api3('Contribution', 'create', $contribution_data);
@@ -537,7 +567,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       $result['contribution_id'] = $contribution['id'];
 
       if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created Contribution with ID ' . $result['contribution_id']);
+        Civi::log()->debug(
+          'RobinWoodDonation.Submit:' . "\n"
+          . 'Created Contribution with ID ' . $result['contribution_id']
+        );
       }
     }
 
@@ -545,14 +578,18 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
      * Handle membership requests.                                             *
      **************************************************************************/
     if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Handling membership requests.');
+      Civi::log()->debug('RobinWoodDonation.Submit:' . "\n" . 'Handling membership requests.');
     }
     if (!empty($params['membership_type_id'])) {
       // Load recurring contribution.
       if (isset($contribution_recur)) {
         $contribution_recur_id = $contribution_recur['id'];
       }
-      elseif (!isset($contribution_recur) && isset($mandate) && $mandate['entity_table'] == 'civicrm_contribution_recur') {
+      elseif (
+        !isset($contribution_recur)
+        && isset($mandate)
+        && $mandate['entity_table'] == 'civicrm_contribution_recur'
+      ) {
         $contribution_recur_id = $mandate['entity_id'];
       }
       else {
@@ -560,17 +597,17 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       }
 
       // Find custom fields on memberships.
-        $custom_field_jahresbeitrag = civicrm_api3('CustomField', 'getsingle', array(
-            'custom_group_id' => CRM_RobinWoodAPI_Submission::CUSTOM_GROUP_ID_BEITRAGSINFORMATIONEN,
-            'name' => CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_NAME_JAHRESBEITRAG,
-        ));
-        $custom_field_zahlungsturnus = civicrm_api3('CustomField', 'getsingle', array(
-            'custom_group_id' => CRM_RobinWoodAPI_Submission::CUSTOM_GROUP_ID_BEITRAGSINFORMATIONEN,
-            'name' => CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_NAME_ZAHLUNGSTURNUS,
-        ));
+      $custom_field_jahresbeitrag = civicrm_api3('CustomField', 'getsingle', [
+        'custom_group_id' => CRM_RobinWoodAPI_Submission::CUSTOM_GROUP_ID_BEITRAGSINFORMATIONEN,
+        'name' => CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_NAME_JAHRESBEITRAG,
+      ]);
+      $custom_field_zahlungsturnus = civicrm_api3('CustomField', 'getsingle', [
+        'custom_group_id' => CRM_RobinWoodAPI_Submission::CUSTOM_GROUP_ID_BEITRAGSINFORMATIONEN,
+        'name' => CRM_RobinWoodAPI_Submission::CUSTOM_FIELD_NAME_ZAHLUNGSTURNUS,
+      ]);
 
       // Create membership.
-      $membership_data = array(
+      $membership_data = [
         'membership_type_id' => $params['membership_type_id'],
         'contact_id' => $contact_id,
         // Yearly amount = amount * 12 months / frequency in months / 100 cents.
@@ -579,7 +616,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
         'start_date' => $start_date,
         'end_date' => $start_date,
         // TODO: Any more parameters?
-      );
+      ];
       $membership = civicrm_api3('Membership', 'create', $membership_data);
       if ($membership['is_error']) {
         throw new Exception($membership['error_message']);
@@ -587,7 +624,10 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
       $result['membership_id'] = $membership['id'];
 
       if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-        CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Created Membership with ID ' . $result['membership_id']);
+        Civi::log()->debug(
+          'RobinWoodDonation.Submit:' . "\n"
+          . 'Created Membership with ID ' . $result['membership_id']
+        );
       }
 
       // TODO: Actively assign contributions made during this API call with the
@@ -598,7 +638,7 @@ function civicrm_api3_robin_wood_donation_Submit($params) {
   }
   catch (Exception $exception) {
     if (defined('ROBINWOODAPI_LOGGING') && ROBINWOODAPI_LOGGING) {
-      CRM_Core_Error::debug_log_message('RobinWoodDonation.Submit:'."\n".'Caught exception: ' . $exception->getMessage());
+      Civi::log()->debug('RobinWoodDonation.Submit:' . "\n" . 'Caught exception: ' . $exception->getMessage());
     }
     return civicrm_api3_create_error($exception->getMessage());
   }

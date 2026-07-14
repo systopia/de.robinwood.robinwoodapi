@@ -14,7 +14,12 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 require_once 'robinwoodapi.civix.php';
+// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
+
 use CRM_RobinWoodAPI_ExtensionUtil as E;
 
 /**
@@ -22,7 +27,7 @@ use CRM_RobinWoodAPI_ExtensionUtil as E;
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
-function robinwoodapi_civicrm_config(&$config) {
+function robinwoodapi_civicrm_config(\CRM_Core_Config &$config): void {
   _robinwoodapi_civix_civicrm_config($config);
 }
 
@@ -31,7 +36,7 @@ function robinwoodapi_civicrm_config(&$config) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
-function robinwoodapi_civicrm_install() {
+function robinwoodapi_civicrm_install(): void {
   _robinwoodapi_civix_civicrm_install();
 }
 
@@ -40,7 +45,7 @@ function robinwoodapi_civicrm_install() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
-function robinwoodapi_civicrm_enable() {
+function robinwoodapi_civicrm_enable(): void {
   _robinwoodapi_civix_civicrm_enable();
 }
 
@@ -49,8 +54,8 @@ function robinwoodapi_civicrm_enable() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_permission
  */
-function robinwoodapi_civicrm_permission(&$permissions) {
-    $permissions['access robinwood api donation.submit'] = 'RobinWood API: Access Donation.Submit API';
+function robinwoodapi_civicrm_permission(array &$permissions): void {
+  $permissions['access robinwood api donation.submit'] = 'RobinWood API: Access Donation.Submit API';
 }
 
 /**
@@ -58,9 +63,14 @@ function robinwoodapi_civicrm_permission(&$permissions) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterAPIPermissions
  */
-function robinwoodapi_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
-    // Restrict API calls to the permission.
-    $permissions['robin_wood_donation']['submit'] = array('access robinwood api donation.submit');
+function robinwoodapi_civicrm_alterAPIPermissions(
+  string $entity,
+  string $action,
+  array &$params,
+  array &$permissions
+): void {
+  // Restrict API calls to the permission.
+  $permissions['robin_wood_donation']['submit'] = ['access robinwood api donation.submit'];
 }
 
 // --- Functions below this ship commented out. Uncomment as required. ---
